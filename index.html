@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dashboards DC Rimac</title>
+
+<style>
+:root{
+  --accent:#2f80ed;
+  --accent-soft:#7db5ff;
+  --accent-2:#00b3a4;
+  --bg1:#06111f;
+  --bg2:#0b1728;
+  --bg3:#111827;
+  --panel:rgba(255,255,255,.075);
+  --panel-2:rgba(255,255,255,.10);
+  --line:rgba(255,255,255,.12);
+  --line-strong:rgba(125,181,255,.35);
+  --text:#ffffff;
+  --text-soft:rgba(255,255,255,.74);
+  --text-muted:rgba(255,255,255,.54);
+  --shadow:0 18px 42px rgba(0,0,0,.34);
+  --radius:20px;
+}
+
+*{ box-sizing:border-box; }
+html,body{ height:100%; margin:0; }
+
+body{
+  font-family:"Segoe UI", Arial, sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(850px 420px at 16% -6%, rgba(47,128,237,.28), transparent 58%),
+    radial-gradient(720px 420px at 86% 0%, rgba(0,179,164,.18), transparent 52%),
+    linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 48%, var(--bg3) 100%);
+  overflow:hidden;
+}
+
+.app{
+  height:100dvh;
+  display:flex;
+  flex-direction:column;
+  padding:14px;
+  gap:14px;
+}
+
+.top{
+  min-height:78px;
+  padding:14px 18px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border:1px solid var(--line);
+  border-radius:22px;
+  background:linear-gradient(180deg, rgba(255,255,255,.095), rgba(255,255,255,.035));
+  backdrop-filter:blur(12px);
+  box-shadow:var(--shadow);
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  min-width:0;
+}
+
+.logo{
+  width:64px;
+  height:64px;
+  border-radius:18px;
+  background:linear-gradient(145deg, rgba(255,255,255,.14), rgba(255,255,255,.045));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid rgba(255,255,255,.12);
+  flex-shrink:0;
+}
+
+.logo img{
+  width:74%;
+  height:74%;
+  object-fit:contain;
+}
+
+.brand-text{ min-width:0; }
+
+.brand-kicker{
+  font-size:11px;
+  letter-spacing:1.8px;
+  font-weight:900;
+  color:var(--accent-soft);
+  text-transform:uppercase;
+  margin-bottom:5px;
+}
+
+.brand-title{
+  font-size:25px;
+  font-weight:900;
+  line-height:1.04;
+  margin:0;
+  letter-spacing:.2px;
+}
+
+.brand-subtitle{
+  margin-top:7px;
+  font-size:12px;
+  color:var(--text-soft);
+  font-weight:600;
+}
+
+.main{
+  flex:1;
+  min-height:0;
+  display:grid;
+  grid-template-columns:300px 1fr;
+  gap:14px;
+}
+
+.sidebar{
+  min-height:0;
+  padding:14px;
+  border:1px solid var(--line);
+  border-radius:22px;
+  background:linear-gradient(180deg, rgba(255,255,255,.085), rgba(255,255,255,.03));
+  backdrop-filter:blur(12px);
+  box-shadow:var(--shadow);
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  overflow-y:auto;
+}
+
+.sidebar-title{
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:1.3px;
+  text-transform:uppercase;
+  color:var(--accent-soft);
+  margin:2px 2px 8px;
+}
+
+.btn{
+  position:relative;
+  width:100%;
+  padding:13px 14px;
+  border-radius:17px;
+  border:1px solid rgba(255,255,255,.10);
+  background:linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.035));
+  color:#fff;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  text-align:left;
+  transition:all .22s ease;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+}
+
+.btn::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:10px;
+  bottom:10px;
+  width:4px;
+  border-radius:10px;
+  background:transparent;
+  transition:all .22s ease;
+}
+
+.btn:hover:not(.disabled){
+  transform:translateY(-1px);
+  border-color:var(--line-strong);
+  background:linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.045));
+}
+
+.btn.active{
+  border-color:rgba(47,128,237,.55);
+  background:
+    linear-gradient(180deg, rgba(47,128,237,.24), rgba(0,179,164,.08)),
+    linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+  box-shadow:
+    0 0 0 1px rgba(47,128,237,.16),
+    0 10px 24px rgba(0,0,0,.26);
+}
+
+.btn.active::before{
+  background:linear-gradient(180deg, var(--accent), var(--accent-2));
+}
+
+.btn.disabled{
+  cursor:not-allowed;
+  opacity:.55;
+}
+
+.btn-icon{
+  width:40px;
+  height:40px;
+  border-radius:13px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
+  background:rgba(255,255,255,.09);
+  border:1px solid rgba(255,255,255,.10);
+  flex-shrink:0;
+}
+
+.btn-text{
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+  min-width:0;
+}
+
+.btn-title{
+  font-size:14px;
+  font-weight:850;
+  letter-spacing:.2px;
+}
+
+.btn-status{
+  font-size:11px;
+  font-weight:700;
+  color:var(--text-muted);
+}
+
+.viewer-wrap{
+  min-height:0;
+  border:1px solid var(--line);
+  border-radius:22px;
+  background:linear-gradient(180deg, rgba(255,255,255,.085), rgba(255,255,255,.03));
+  backdrop-filter:blur(12px);
+  box-shadow:var(--shadow);
+  padding:12px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.viewer-head{
+  min-height:42px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 6px 0 4px;
+}
+
+.viewer-title{
+  font-size:13px;
+  font-weight:850;
+  color:var(--text-soft);
+  letter-spacing:.35px;
+}
+
+.viewer-dot{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:var(--accent-2);
+  box-shadow:0 0 16px rgba(0,179,164,.9);
+}
+
+.viewer{
+  position:relative;
+  flex:1;
+  min-height:0;
+  overflow:hidden;
+  border-radius:17px;
+  background:#ffffff;
+  border:1px solid rgba(255,255,255,.10);
+}
+
+iframe{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  border:0;
+  background:#fff;
+}
+
+.footer{
+  min-height:48px;
+  padding:0 16px;
+  border:1px solid var(--line);
+  border-radius:19px;
+  background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  box-shadow:var(--shadow);
+}
+
+.footer img{
+  height:24px;
+  opacity:.92;
+}
+
+.footer-text{
+  font-size:11px;
+  color:rgba(255,255,255,.70);
+  font-weight:650;
+}
+
+.sidebar::-webkit-scrollbar{ width:8px; }
+.sidebar::-webkit-scrollbar-thumb{
+  background:rgba(255,255,255,.14);
+  border-radius:10px;
+}
+
+@media (max-width:980px){
+  body{ overflow:auto; }
+
+  .app{
+    height:auto;
+    min-height:100dvh;
+  }
+
+  .main{
+    grid-template-columns:1fr;
+    grid-template-rows:auto 1fr;
+  }
+
+  .sidebar{
+    flex-direction:row;
+    overflow-x:auto;
+    overflow-y:hidden;
+  }
+
+  .sidebar-title{ display:none; }
+
+  .btn{
+    min-width:220px;
+    flex-shrink:0;
+  }
+
+  .brand-title{ font-size:21px; }
+  .brand-subtitle{ font-size:11px; }
+  .viewer-wrap{ min-height:72dvh; }
+}
+</style>
+
+<link rel="icon" href="https://pe-safety.github.io/rimacdigital/Imagenes/icono_rimac.png" type="image/png">
+</head>
+
+<body>
+<div class="app">
+
+  <div class="top">
+    <div class="brand">
+      <div class="logo">
+        <img src="Imagenes/logo_rimac.png" alt="Logo">
+      </div>
+
+      <div class="brand-text">
+        <div class="brand-kicker">Centro de control</div>
+        <h1 class="brand-title">DASHBOARDS DC RIMAC</h1>
+        <div class="brand-subtitle">Panel de seguimiento de iniciativas y gestión operativa · DC Rimac</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <div class="sidebar">
+      <div class="sidebar-title">Dashboards disponibles</div>
+
+      <button class="btn active" data-src="https://app.powerbi.com/view?r=eyJrIjoiMjZjMjBkM2UtZjY4OC00YWMyLTg1ODYtYjQ2MmMwNGIyMDIyIiwidCI6IjEwYWVmMTg5LTA1ZGItNGY2Zi05NTdmLTI3MGY5N2JmNTAzYiIsImMiOjZ9" data-title="3Rs">
+        <div class="btn-icon">♻️</div>
+        <div class="btn-text">
+          <div class="btn-title">3Rs</div>
+        </div>
+      </button>
+
+      <button class="btn" data-src="https://app.powerbi.com/view?r=eyJrIjoiOTNjNjYyYjctYTc4Ny00NjIyLTlkNWUtYjFlNDY4Yjk1ODhhIiwidCI6IjEwYWVmMTg5LTA1ZGItNGY2Zi05NTdmLTI3MGY5N2JmNTAzYiIsImMiOjZ9" data-title="Academy">
+        <div class="btn-icon">🎓</div>
+        <div class="btn-text">
+          <div class="btn-title">Academy</div>
+        </div>
+      </button>
+
+      <button class="btn" data-src="https://app.powerbi.com/view?r=eyJrIjoiYzUyNjU0NzYtNmVlNy00YzY0LWE0ZmItYWViY2I5ZmRjMWJjIiwidCI6IjEwYWVmMTg5LTA1ZGItNGY2Zi05NTdmLTI3MGY5N2JmNTAzYiIsImMiOjZ9" data-title="SKAP">
+        <div class="btn-icon">🧩</div>
+        <div class="btn-text">
+          <div class="btn-title">SKAP</div>
+        </div>
+      </button>
+
+      <button class="btn" data-src="https://app.powerbi.com/view?r=eyJrIjoiMTFkOGY4ZTEtNGI4Ni00MDhjLTlhZWEtNmIwNmFiMTQxYmMxIiwidCI6IjEwYWVmMTg5LTA1ZGItNGY2Zi05NTdmLTI3MGY5N2JmNTAzYiIsImMiOjZ9" data-title="Reconocimientos">
+        <div class="btn-icon">🏅</div>
+        <div class="btn-text">
+          <div class="btn-title">Reconocimientos</div>
+        </div>
+      </button>
+
+      <button class="btn" data-src="https://app.powerbi.com/view?r=eyJrIjoiZDE2N2VlMTctOTViYS00MTYxLWJlNGItM2RmM2IyMjUwM2QzIiwidCI6IjEwYWVmMTg5LTA1ZGItNGY2Zi05NTdmLTI3MGY5N2JmNTAzYiIsImMiOjZ9" data-title="Engagement">
+        <div class="btn-icon">🤝</div>
+        <div class="btn-text">
+          <div class="btn-title">Engagement</div>
+        </div>
+      </button>
+
+      <button class="btn" data-src="https://app.powerbi.com/view?r=eyJrIjoiMDY5NjgxODktMThkMi00Nzc1LTljOWEtZTAyOTI5NWRkN2YzIiwidCI6IjEwYWVmMTg5LTA1ZGItNGY2Zi05NTdmLTI3MGY5N2JmNTAzYiIsImMiOjZ9" data-title="Semáforo Emocional">
+        <div class="btn-icon">🚦</div>
+        <div class="btn-text">
+          <div class="btn-title">Semáforo Emocional</div>
+        </div>
+      </button>
+
+      <button class="btn disabled" data-title="Servicios Generales" disabled>
+        <div class="btn-icon">🛠️</div>
+        <div class="btn-text">
+          <div class="btn-title">Servicios Generales</div>
+          <div class="btn-status">Pendiente</div>
+        </div>
+      </button>
+    </div>
+
+    <div class="viewer-wrap">
+      <div class="viewer-head">
+        <div class="viewer-title" id="viewerTitle">Visual activa: 3Rs</div>
+        <div class="viewer-dot"></div>
+      </div>
+
+      <div class="viewer">
+        <iframe
+          id="frame"
+          src="https://app.powerbi.com/view?r=eyJrIjoiMjZjMjBkM2UtZjY4OC00YWMyLTg1ODYtYjQ2MmMwNGIyMDIyIiwidCI6IjEwYWVmMTg5LTA1ZGItNGY2Zi05NTdmLTI3MGY5N2JmNTAzYiIsImMiOjZ9"
+          allowfullscreen="true">
+        </iframe>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <img src="Imagenes/CONECTA1.png" alt="Conecta">
+    <div class="footer-text">© 2026 DC Rimac · Todos los derechos reservados</div>
+  </div>
+
+</div>
+
+<script>
+const btns = document.querySelectorAll('.btn:not(.disabled)');
+const frame = document.getElementById('frame');
+const viewerTitle = document.getElementById('viewerTitle');
+
+btns.forEach(b => {
+  b.onclick = () => {
+    btns.forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    frame.src = b.dataset.src;
+    viewerTitle.textContent = 'Visual activa: ' + b.dataset.title;
+  };
+});
+</script>
+</body>
+</html>
